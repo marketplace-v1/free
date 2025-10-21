@@ -71,6 +71,8 @@
       transition: all 0.3s ease;
     }
     .category-buttons button:hover { background: var(--button-hover); transform: scale(1.05); }
+
+    /* --- UPDATED ITEM LAYOUT --- */
     .grid-container {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px; max-width: 1200px; margin: 35px auto 0; padding: 0 20px;
@@ -79,24 +81,34 @@
       background: var(--glass-bg); border: 1px solid var(--glass-border);
       border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       transition: transform 0.3s ease; display: flex; flex-direction: column;
-      /* Removed heavy blur for performance */
-      contain: layout;
+      align-items: center; text-align: center; contain: layout;
     }
     .item:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
-    .item a { display: flex; flex-direction: column; text-decoration: none; color: inherit; }
-    .img-wrapper { aspect-ratio: 16/9; overflow: hidden; position: relative; }
+    .item a { 
+      text-decoration: none; color: inherit; width: 100%; 
+      display: flex; flex-direction: column; align-items: center; 
+    }
+    .item h2 {
+      font-size: 1em; margin: 12px 0 2px 0; color: var(--text-color);
+      text-align: center; font-weight: 500;
+      order: 1; /* Title comes first */
+    }
+    .subtitle {
+      text-align: center; font-size: 0.85em; color: #ccc;
+      margin-bottom: 8px; font-weight: 400;
+      order: 2; /* Subtitle comes second */
+    }
+    .img-wrapper {
+      width: 100%; aspect-ratio: 16/9; overflow: hidden;
+      /* REMOVED border-top property to eliminate the white line */
+      order: 3; /* Image comes third */
+    }
     .img-wrapper img {
-      width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;
-      /* Lazy-load images */
-      loading: lazy;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.3s ease;
     }
     .item:hover img { transform: scale(1.05); }
-    .item h2 {
-      font-size: 1em; padding: 15px; margin: 0; color: var(--text-color);
-      text-align: center; white-space: nowrap; overflow: hidden;
-      text-overflow: ellipsis; font-weight: 500; order: -1;
-      background: rgba(0,0,0,0.3);
-    }
+
     footer { text-align: center; margin-top: 40px; font-size: 0.9em; color: #bbb; z-index: 2; }
     .stars { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; pointer-events: none; z-index: 1; }
     .star { position: absolute; background: rgba(255,255,255,0.8); border-radius: 50%; animation: twinkle var(--anim-dur) ease-in-out infinite; }
@@ -150,12 +162,11 @@
 <script>
     const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1399701836533076061/ykK4JpQU2N010-FHfgqU1T2YeQCJzVg1QBC_g0Z8I38zFpuN1j5liVSDtZUOibp3gwnA';
 
-    // Optimized starry background
+    // Stars background
     function createStars() {
       const container = document.getElementById('stars');
       const frag = document.createDocumentFragment();
-      const count = 50;
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < 50; i++) {
         const s = document.createElement('div');
         s.className = 'star';
         const size = Math.random() * 2 + 1;
@@ -169,7 +180,7 @@
     }
     createStars();
 
-    // Debounced search filter
+    // Search filter
     let searchTimeout;
     document.getElementById('searchInput').addEventListener('input', e => {
       const q = e.target.value.toLowerCase();
@@ -192,25 +203,33 @@
       });
     });
 
-    // Request functionality
+    // Send Request
     document.getElementById('sendButton').addEventListener('click', async () => {
-      const inp = document.getElementById('linkInput'); const url = inp.value.trim();
+      const inp = document.getElementById('linkInput');
+      const url = inp.value.trim();
       const prefix = 'https://www.minecraft.net/en-us/';
       if (!url.startsWith(prefix)) return alert(`Valid links must start with: ${prefix}`);
       const btn = document.getElementById('sendButton');
       try {
-        btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        const res = await fetch(DISCORD_WEBHOOK_URL, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({content:`Request: ${url}`}) });
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        const res = await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({content:`Request: ${url}`})
+        });
         if (!res.ok) throw new Error();
-        alert('Request sent successfully!'); inp.value='';
+        alert('Request sent successfully!');
+        inp.value = '';
       } catch {
         alert('Failed to send request');
       } finally {
-        btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i>';
+        btn.disabled=false;
+        btn.innerHTML='<i class="fas fa-paper-plane"></i>';
       }
     });
 
-    // Shuffle items on load efficiently
+    // Randomize items
     document.addEventListener('DOMContentLoaded', () => {
       const container = document.getElementById('itemContainer');
       const items = Array.from(container.children);
@@ -218,10 +237,33 @@
         const j = Math.floor(Math.random() * (i + 1));
         [items[i], items[j]] = [items[j], items[i]];
       }
-      const frag = document.createDocumentFragment(); items.forEach(i=>frag.appendChild(i));
-      container.innerHTML=''; container.appendChild(frag);
+      container.innerHTML = '';
+      items.forEach(i => container.appendChild(i));
+    });
+
+    // === Auto Subtitle Inserter ===
+    document.addEventListener('DOMContentLoaded', () => {
+      const categoryNames = {
+        maps: "World",
+        addons: "Addon",
+        mashups: "Mashup",
+        textures: "Texture",
+        skins: "Skin"
+      };
+      document.querySelectorAll('.item').forEach(item => {
+        const cat = item.dataset.category;
+        const subtitleText = categoryNames[cat] || "Item";
+        const h2 = item.querySelector('h2');
+        if (h2 && !item.querySelector('.subtitle')) {
+          const p = document.createElement('p');
+          p.className = 'subtitle';
+          p.textContent = subtitleText;
+          h2.insertAdjacentElement('afterend', p);
+        }
+      });
     });
   </script>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('itemContainer');
@@ -235,5 +277,6 @@
     items.forEach(item => container.appendChild(item));
   });
 </script>
+
 </body>
 </html>
