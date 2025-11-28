@@ -1,490 +1,67 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Marketplace</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<style>
-    :root {
-      --gradient-colors: linear-gradient(270deg, #0f0c29, #302b63, #24243e);
-      --text-color: #fff;
-      --glass-bg: rgba(255, 255, 255, 0.07);
-      --glass-border: rgba(255, 255, 255, 0.15);
-      --button-bg: rgba(255, 255, 255, 0.1);
-      --button-hover: rgba(255, 255, 255, 0.2);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Site Offline</title>
+  <meta name="description" content="This website is temporarily down. Join our Discord for updates." />
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:linear-gradient(135deg,#7c3aed,#06b6d4);--muted:#9aa4b2}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.08), transparent),
+                  radial-gradient(900px 500px at 90% 90%, rgba(6,182,212,0.06), transparent),
+                  var(--bg);
+      color:#e6eef6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Rubik', sans-serif;
-      background: var(--gradient-colors);
-      background-size: 400% 400%;
-      animation: gradientShift 20s ease infinite;
-      color: var(--text-color);
-      overflow-x: hidden;
-      padding: 20px;
-      min-height: 100vh;
-      position: relative;
+    .card{
+      width:100%;
+      max-width:720px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:48px;
+      box-shadow:0 10px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+      text-align:center;
     }
-    @keyframes gradientShift {
-      0%,100% { background-position: 0% 50%; }
-      50%     { background-position: 100% 50%; }
+    h1{margin:0 0 12px;font-size:clamp(20px,4vw,36px);letter-spacing:-0.02em}
+    p.lead{margin:0 0 20px;color:var(--muted);font-size:clamp(13px,1.6vw,16px)}
+    .discord-btn{
+      display:inline-flex;gap:10px;align-items:center;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600;
+      background:var(--card);border:1px solid rgba(255,255,255,0.04);
+      transition:transform .12s ease, box-shadow .12s ease;
     }
-    header {
-      text-align: center;
-      margin-bottom: 25px;
-      position: relative;
-      z-index: 2;
-    }
-    h1 { font-size: 2.5em; margin-bottom: 15px; text-shadow: 0 0 12px rgba(255,255,255,0.3); }
-    .search-container {
-      display: flex; flex-direction: column; align-items: center; gap: 15px;
-      width: 100%; max-width: 320px; margin: 0 auto;
-    }
-    .input-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-    .search-wrapper, .request-wrapper {
-      display: flex; background: var(--glass-bg); border: 1px solid var(--glass-border);
-      border-radius: 8px; padding: 5px; transition: transform 0.3s ease;
-      height: 38px; width: 100%;
-    }
-    .search-wrapper:hover, .request-wrapper:hover { transform: translateY(-2px); }
-    .search-wrapper input, .request-wrapper input {
-      flex-grow: 1; padding: 6px 12px; font-size: 0.88em;
-      border: none; background: transparent; color: var(--text-color);
-    }
-    .search-wrapper button, .request-wrapper button {
-      width: 36px; display: flex; align-items: center; justify-content: center;
-      background: var(--button-bg); color: var(--text-color); border: none;
-      border-radius: 6px; cursor: pointer; transition: all 0.3s ease;
-    }
-    .search-wrapper button:hover, .request-wrapper button:hover {
-      background: var(--button-hover); transform: scale(1.05);
-    }
-    .category-buttons { display: flex; gap: 12px; justify-content: center; }
-    .category-buttons button {
-      width: 36px; height: 36px; background: var(--button-bg);
-      border: 1px solid var(--glass-border); border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1em; color: var(--text-color); cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .category-buttons button:hover { background: var(--button-hover); transform: scale(1.05); }
-
-    /* --- UPDATED ITEM LAYOUT --- */
-    .grid-container {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px; max-width: 1200px; margin: 35px auto 0; padding: 0 20px;
-    }
-    .item {
-      background: var(--glass-bg); border: 1px solid var(--glass-border);
-      border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease; display: flex; flex-direction: column;
-      align-items: center; text-align: center; contain: layout;
-      cursor: pointer;
-    }
-    .item:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
-    .item-content { 
-      text-decoration: none; color: inherit; width: 100%; 
-      display: flex; flex-direction: column; align-items: center; 
-    }
-    .item h2 {
-      font-size: 1em; margin: 12px 0 2px 0; color: var(--text-color);
-      text-align: center; font-weight: 500;
-      order: 1; /* Title comes first */
-    }
-    .subtitle {
-      text-align: center; font-size: 0.85em; color: #ccc;
-      margin-bottom: 8px; font-weight: 400;
-      order: 2; /* Subtitle comes second */
-    }
-    .img-wrapper {
-      width: 100%; aspect-ratio: 16/9; overflow: hidden;
-      /* REMOVED border-top property to eliminate the white line */
-      order: 3; /* Image comes third */
-    }
-    .img-wrapper img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-    .item:hover img { transform: scale(1.05); }
-
-    /* Overlay Styles */
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-    
-    .overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .download-modal {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
-    }
-    
-    .overlay.active .download-modal {
-      transform: translateY(0);
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    
-    .modal-title {
-      font-size: 1.4em;
-      font-weight: 700;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-    
-    .close-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-color);
-      font-size: 1.5em;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    
-    .close-btn:hover {
-      transform: scale(1.1);
-    }
-    
-    .modal-image {
-      width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    
-    .modal-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .modal-type {
-      text-align: center;
-      font-size: 0.9em;
-      color: #ccc;
-      margin-bottom: 20px;
-    }
-    
-    .download-links {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    
-    .download-link {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--button-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      padding: 12px 15px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      text-decoration: none;
-      color: var(--text-color);
-    }
-    
-    .download-link:hover {
-      background: var(--button-hover);
-      transform: translateY(-2px);
-    }
-    
-    .link-text {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .link-icon {
-      font-size: 1.2em;
-    }
-    
-    .link-arrow {
-      font-size: 0.9em;
-      opacity: 0.7;
-    }
-
-    /* Hidden download links container */
-    .hidden-links {
-      display: none;
-    }
-
-    footer { text-align: center; margin-top: 40px; font-size: 0.9em; color: #bbb; z-index: 2; }
-    .stars { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; pointer-events: none; z-index: 1; }
-    .star { position: absolute; background: rgba(255,255,255,0.8); border-radius: 50%; animation: twinkle var(--anim-dur) ease-in-out infinite; }
-    @keyframes twinkle { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
-    @media (max-width: 768px) { 
-      .grid-container { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-      .download-modal { width: 95%; padding: 20px; }
-    }
+    .discord-btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(3,7,18,0.6)}
+    .discord-icon{width:20px;height:20px;display:inline-block;flex:0 0 20px}
+    footer{margin-top:22px;color:var(--muted);font-size:13px}
+    @media (prefers-reduced-motion:reduce){.discord-btn{transition:none}}
   </style>
 </head>
-<script src="https://publisher.linkvertise.com/cdn/linkvertise.js"></script>
-<script>linkvertise(1354486, {whitelist: ["gofile.io"], blacklist: []});</script>
-<script>
-(() => {
-  function loadScript(url, callback) {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = url;
-    script.onload = callback;
-    document.head.appendChild(script);
-  }
-  loadScript("https://cdn.work.ink/js/workink-sitescript.js", function() {
-    workink("https://work.ink/1XMy/mb870ify", ["mega.nz"], []);
-  });
-})();
-</script>
 <body>
-<div class="stars" id="stars"></div>
-<header>
-<h1>Marketplace</h1>
-<div class="search-container">
-<div class="input-group">
-<div class="search-wrapper">
-<input id="searchInput" placeholder="Search..." type="text"/>
-<button><i class="fas fa-search"></i></button>
-</div>
-<div class="request-wrapper">
-<input id="linkInput" placeholder="Request..." type="text"/>
-<button id="sendButton"><i class="fas fa-paper-plane"></i></button>
-</div>
-</div>
-<div class="category-buttons">
-<button data-filter="all"><i class="fas fa-infinity" title="All"></i></button>
-<button data-filter="worlds"><i class="fas fa-globe" title="Worlds"></i></button>
-<button data-filter="addons"><i class="fas fa-puzzle-piece" title="Addons"></i></button>
-<button data-filter="mashups"><i class="fas fa-layer-group" title="Mashups"></i></button>
-<button data-filter="textures"><i class="fas fa-image" title="Textures"></i></button>
-<button data-filter="skins"><i class="fas fa-tshirt" title="Skins"></i></button>
-</div>
-</div>
-</header>
-<main class="grid-container" id="itemContainer">
-<!-- ITEMS WILL BE ADDED HERE -->
-<div class="item" data-category="skins" data-uuid="ec34fb31-04ab-4780-8ebd-7f4ba8f8ec01"><div class="item-content"><h2>Deep Dark Mobs</h2><p class="subtitle">Skin</p><div class="img-wrapper"><img alt="Deep Dark Mobs" src="https://xforgeassets002.xboxlive.com/pf-namespace-b63a0803d3653643/c1c6f21f-dfe9-4af6-81f1-d82bb2876730/DeepDarkMobs_Thumbnail_0.jpg"/></div></div></div><div class="item" data-category="mashups" data-uuid="b03fd87d-d26a-4c9e-9162-4e91f66f6c95"><div class="item-content"><h2>PvP Essentials Mash Up</h2><p class="subtitle">Mashup</p><div class="img-wrapper"><img alt="PvP Essentials Mash Up" src="https://xforgeassets001.xboxlive.com/pf-title-b63a0803d3653643-20ca2/b189b986-f8fd-4250-a561-dcfd9e836e6f/PVPE_Thumbnail_0.jpg"/></div></div></div></main>
-<!-- Download Overlay -->
-<div class="overlay" id="downloadOverlay">
-<div class="download-modal">
-<div class="modal-header">
-<h3 class="modal-title" id="modalTitle">Item Title</h3>
-<button class="close-btn" id="closeModal"><i class="fas fa-times"></i></button>
-</div>
-<div class="modal-image">
-<img alt="Item Image" id="modalImage" src=""/>
-</div>
-<p class="modal-type" id="modalType">Type</p>
-<div class="download-links" id="downloadLinks">
-<!-- Download links will be dynamically added here -->
-</div>
-</div>
-</div>
-<!-- Hidden container with pre-loaded download links -->
-<div class="hidden-links" id="hiddenLinks">
-<!-- DOWNLOAD LINKS WILL BE ADDED HERE -->
-<div class="item-links" data-uuid="ec34fb31-04ab-4780-8ebd-7f4ba8f8ec01"><a class="download-link" href="https://gofile.io/d/tK5Ys3" target="_blank"><div class="link-text"><i class="fas fa-tshirt link-icon"></i><span>Skin</span></div><i class="fas fa-external-link-alt link-arrow"></i></a></div><div class="item-links" data-uuid="b03fd87d-d26a-4c9e-9162-4e91f66f6c95"><a class="download-link" href="https://gofile.io/d/EyL67W" target="_blank"><div class="link-text"><i class="fas fa-image link-icon"></i><span>Texture</span></div><i class="fas fa-external-link-alt link-arrow"></i></a><a class="download-link" href="https://gofile.io/d/HseYX8" target="_blank"><div class="link-text"><i class="fas fa-globe link-icon"></i><span>World</span></div><i class="fas fa-external-link-alt link-arrow"></i></a><a class="download-link" href="https://gofile.io/d/ld3vMF" target="_blank"><div class="link-text"><i class="fas fa-tshirt link-icon"></i><span>Skin</span></div><i class="fas fa-external-link-alt link-arrow"></i></a></div></div>
-<footer>© YashoFree</footer>
-<script>
-    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1399701836533076061/ykK4JpQU2N010-FHfgqU1T2YeQCJzVg1QBC_g0Z8I38zFpuN1j5liVSDtZUOibp3gwnA';
+  <main class="card" role="main" aria-labelledby="status-title">
+    <h1 id="status-title">Site currently unavailable</h1>
+    <p class="lead">Join our Discord for status updates and help.</p>
 
-    // Stars background
-    function createStars() {
-      const container = document.getElementById('stars');
-      const frag = document.createDocumentFragment();
-      for (let i = 0; i < 50; i++) {
-        const s = document.createElement('div');
-        s.className = 'star';
-        const size = Math.random() * 2 + 1;
-        s.style.width = s.style.height = `${size}px`;
-        s.style.left = `${Math.random() * 100}%`;
-        s.style.top = `${Math.random() * 100}%`;
-        s.style.setProperty('--anim-dur', `${Math.random() * 3 + 2}s`);
-        frag.appendChild(s);
-      }
-      container.appendChild(frag);
-    }
-    createStars();
-
-    // Search filter
-    let searchTimeout;
-    document.getElementById('searchInput').addEventListener('input', e => {
-      const q = e.target.value.toLowerCase();
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        document.querySelectorAll('.item').forEach(item => {
-          const title = item.querySelector('h2').textContent.toLowerCase();
-          item.style.display = title.includes(q) ? 'flex' : 'none';
-        });
-      }, 200);
-    });
-
-    // Category filter
-    document.querySelectorAll('.category-buttons button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filter = btn.getAttribute('data-filter');
-        document.querySelectorAll('.item').forEach(item => {
-          item.style.display = (filter === 'all' || item.dataset.category === filter) ? 'flex' : 'none';
-        });
-      });
-    });
-
-    // Send Request
-    document.getElementById('sendButton').addEventListener('click', async () => {
-      const inp = document.getElementById('linkInput');
-      const url = inp.value.trim();
-      const prefix = 'https://www.minecraft.net/en-us/';
-      if (!url.startsWith(prefix)) return alert(`Valid links must start with: ${prefix}`);
-      const btn = document.getElementById('sendButton');
-      try {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        const res = await fetch(DISCORD_WEBHOOK_URL, {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({content:`Request: ${url}`})
-        });
-        if (!res.ok) throw new Error();
-        alert('Request sent successfully!');
-        inp.value = '';
-      } catch {
-        alert('Failed to send request');
-      } finally {
-        btn.disabled=false;
-        btn.innerHTML='<i class="fas fa-paper-plane"></i>';
-      }
-    });
-
-    // Randomize items
-    document.addEventListener('DOMContentLoaded', () => {
-      const container = document.getElementById('itemContainer');
-      const items = Array.from(container.children);
-      for (let i = items.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [items[i], items[j]] = [items[j], items[i]];
-      }
-      container.innerHTML = '';
-      items.forEach(i => container.appendChild(i));
-    });
-
-    // === Auto Subtitle Inserter ===
-    document.addEventListener('DOMContentLoaded', () => {
-      const categoryNames = {
-        worlds: "World",
-        addons: "Addon",
-        mashups: "Mashup",
-        textures: "Texture",
-        skins: "Skin"
-      };
-      document.querySelectorAll('.item').forEach(item => {
-        const cat = item.dataset.category;
-        const subtitleText = categoryNames[cat] || "Item";
-        const h2 = item.querySelector('h2');
-        if (h2 && !item.querySelector('.subtitle')) {
-          const p = document.createElement('p');
-          p.className = 'subtitle';
-          p.textContent = subtitleText;
-          h2.insertAdjacentElement('afterend', p);
-        }
-      });
-    });
-
-    // === Download Overlay Functionality ===
-    const overlay = document.getElementById('downloadOverlay');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalImage = document.getElementById('modalImage');
-    const modalType = document.getElementById('modalType');
-    const downloadLinks = document.getElementById('downloadLinks');
-    const closeModal = document.getElementById('closeModal');
-    const hiddenLinks = document.getElementById('hiddenLinks');
-
-    // Open overlay when item is clicked
-    document.querySelectorAll('.item').forEach(item => {
-      item.addEventListener('click', () => {
-        const title = item.querySelector('h2').textContent;
-        const subtitle = item.querySelector('.subtitle').textContent;
-        const imageSrc = item.querySelector('img').src;
-        const uuid = item.getAttribute('data-uuid');
-        
-        // Set modal content
-        modalTitle.textContent = title;
-        modalImage.src = imageSrc;
-        modalType.textContent = subtitle;
-        
-        // Clear previous links
-        downloadLinks.innerHTML = '';
-        
-        // Find and copy the pre-loaded links for this item
-        const itemLinksContainer = hiddenLinks.querySelector(`.item-links[data-uuid="${uuid}"]`);
-        if (itemLinksContainer) {
-          // Clone all the download links for this item
-          const links = itemLinksContainer.querySelectorAll('.download-link');
-          links.forEach(link => {
-            downloadLinks.appendChild(link.cloneNode(true));
-          });
-        }
-        
-        // Show overlay
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-        
-        // Log UUID for debugging
-        console.log(`Item UUID: ${uuid}`);
-      });
-    });
-
-    // Close overlay
-    closeModal.addEventListener('click', () => {
-      overlay.classList.remove('active');
-      document.body.style.overflow = ''; // Restore scrolling
-    });
-
-    // Close overlay when clicking outside the modal
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
-        overlay.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
-      }
-    });
-
-    // Close overlay with Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && overlay.classList.contains('active')) {
-        overlay.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
-      }
-    });
-  </script>
+    <a class="discord-btn" href="https://discord.gg/SrZxTkuuab" rel="noopener noreferrer" target="_blank">
+      <span class="discord-icon" aria-hidden="true">
+        <!-- Inline Discord-like icon (simple) -->
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g fill="#5865F2">
+            <path d="M20.317 4.369a19.791 19.791 0 00-4.885-1.515.07.07 0 00-.075.035c-.21.38-.444.874-.608 1.26-1.844-.276-3.68-.276-5.486 0-.164-.386-.4-.88-.61-1.26a.07.07 0 00-.075-.035 19.736 19.736 0 00-4.885 1.515.065.065 0 00-.03.027C2.98 9.045 2.37 13.56 3.37 18.03c.05.147.18.23.33.23 2.06-.306 3.83-.99 5.36-1.8a.069.069 0 01.073-.01c.415.18.84.33 1.28.45.53.16 1.07.28 1.62.36.21.03.42.05.63.07.22-.02.43-.04.64-.07.55-.08 1.09-.2 1.62-.36.44-.12.87-.27 1.29-.45a.069.069 0 01.073.01c1.53.81 3.3 1.49 5.36 1.8.15 0 .28-.083.33-.23 1.02-4.47.4-8.98-2.92-13.633a.052.052 0 00-.03-.027zM8.02 15.331c-1.18 0-2.155-1.085-2.155-2.42 0-1.335.95-2.42 2.155-2.42 1.206 0 2.18 1.085 2.155 2.42 0 1.335-.95 2.42-2.155 2.42zm7.96 0c-1.18 0-2.155-1.085-2.155-2.42 0-1.335.95-2.42 2.155-2.42 1.206 0 2.18 1.085 2.155 2.42 0 1.335-.95 2.42-2.155 2.42z"/>
+          </g>
+        </svg>
+      </span>
+      Discord
+    </a>
+  </main>
 </body>
 </html>
